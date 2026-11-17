@@ -7,6 +7,9 @@ import { addComment, deleteComment, deleteTask, updateComment, updateTask } from
 import { TakeButton } from '../components/cards.jsx';
 import { Avatar, ConfirmRow, DueBadge, ErrorNote, Icons, LockNote, Modal, Segmented, StatusBadge, TASK_STATUS, firstName, formatWhen } from '../components/ui.jsx';
 
+// Same 2000-character limit already on this form, the edit box, and the Firestore comment rule.
+const COMMENT_MAX = 2000;
+
 function Comment({ comment }) {
   const { user } = useAuth();
   const { nameOf } = useData();
@@ -43,7 +46,7 @@ function Comment({ comment }) {
       {editing ? (
         <form className="comment-edit" aria-label="Edit comment" onSubmit={save}>
           <label className="sr-only" htmlFor={`edit-${comment.id}`}>Comment</label>
-          <textarea id={`edit-${comment.id}`} className="field" rows={3} required maxLength={2000} value={text} onChange={(e) => setText(e.target.value)} />
+          <textarea id={`edit-${comment.id}`} className="field" rows={3} required maxLength={COMMENT_MAX} value={text} onChange={(e) => setText(e.target.value)} />
           <div className="row-gap">
             <button type="submit" className="pill pill-sm" disabled={busy}>Save</button>
             <button type="button" className="textlink small" onClick={() => setEditing(false)}>Cancel</button>
@@ -75,11 +78,14 @@ function Comments({ taskId }) {
     e.preventDefault();
     run(async () => {
       await addComment(user.uid, taskId, draft.trim());
+      // A successful post clears the draft, so the counter below returns to 0.
       setDraft('');
     });
   };
 
   const count = comments?.length ?? 0;
+  // The last 200 characters turn the count red, and the limit itself is bold.
+  const countTone = draft.length >= COMMENT_MAX ? ' is-limit' : draft.length >= COMMENT_MAX - 200 ? ' is-near' : '';
   return (
     <section aria-labelledby="h-comments" className="comments">
       <div className="row-baseline">
@@ -92,8 +98,27 @@ function Comments({ taskId }) {
         </ul>
       )}
       <form className="comment-form" aria-label="Add a comment" onSubmit={post}>
-        <label className="sr-only" htmlFor="new-comment">Add a comment</label>
-        <input id="new-comment" className="field" type="text" required maxLength={2000} placeholder="Add a comment" value={draft} onChange={(e) => setDraft(e.target.value)} />
+        <div className="comment-field">
+          <label className="sr-only" htmlFor="new-comment">Add a comment</label>
+          <textarea
+            id="new-comment"
+            className="field"
+            rows={3}
+            required
+            maxLength={COMMENT_MAX}
+            placeholder="Add a comment"
+            value={draft}
+            aria-describedby="new-comment-count"
+            onChange={(e) => setDraft(e.target.value)}
+          />
+          <span
+            id="new-comment-count"
+            className={`hint comment-count${countTone}`}
+            aria-live="polite"
+          >
+            {draft.length} / {COMMENT_MAX}
+          </span>
+        </div>
         <button type="submit" className="pill" disabled={busy || !draft.trim()}>Post</button>
       </form>
       <ErrorNote>{error}</ErrorNote>

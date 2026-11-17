@@ -435,9 +435,14 @@ textarea.field { padding: var(--space-3) var(--space-4); line-height: 1.4; resiz
 .comment-actions { display: flex; gap: var(--space-4); }
 .comment-text { font-size: 16px; line-height: 1.5; white-space: pre-line; }
 .comment-edit { display: flex; flex-direction: column; gap: var(--space-2); }
-.comment-form { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1); }
-.comment-form .field { flex: 1; min-width: 0; background: var(--surface-raised); }
+.comment-form { display: flex; align-items: flex-start; gap: var(--space-2); margin-top: var(--space-1); }
+.comment-field { flex: 1; display: flex; flex-direction: column; align-items: stretch; gap: var(--space-1); min-width: 0; }
+.comment-form .field { width: 100%; min-width: 0; background: var(--surface-raised); }
 .comment-form .pill { min-height: 54px; }
+.comment-count { align-self: flex-end; }
+.comment-count.is-near,
+.comment-count.is-limit { color: var(--danger); }
+.comment-count.is-limit { font-weight: 600; }
 
 /* ---- Theme toggle (dark mode switch on Me and in the desktop sidebar) ---- */
 .theme-toggle { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); width: 100%; min-height: 60px; padding: var(--space-3) var(--space-5); border: 0; border-radius: var(--radius-card-sm); background: var(--card-tint); color: var(--ink); font-size: 17px; font-weight: 500; text-align: left; }

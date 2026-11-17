@@ -272,6 +272,19 @@ a.card:focus-visible::before { opacity: 1; }
 .md-detail { min-width: 0; }
 .list-tools { display: flex; flex-direction: column; gap: var(--space-3); padding: 0 var(--gutter) var(--space-6); }
 .list-tools .field { width: 100%; }
+/* Clear control sits in the issues search field, and only while that field has text. */
+.search-wrap { position: relative; }
+.search-wrap.has-clear .field { padding-right: 56px; }
+.search-wrap input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.search-clear {
+  position: absolute; top: 50%; right: var(--space-1); transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: var(--tap); height: var(--tap); padding: 0;
+  border: 0; border-radius: var(--radius-sm); background: transparent;
+  color: var(--ink-2); font-size: 24px; line-height: 1;
+}
+.search-clear:hover { background: var(--hover-tint); color: var(--ink); }
+.search-clear:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 /* Members search sits inside a band, which already has the side gutter. Two classes so the 900px rule below can't remove the bottom space. */
 .list-tools.member-tools { max-width: 560px; padding: 0 0 var(--space-6); }
 .md-empty { display: none; }

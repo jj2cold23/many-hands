@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, Outlet, useMatch } from 'react-router-dom';
 import { COMMUNITY_NAME } from '../firebase.config.js';
 import { useData } from '../lib/data.jsx';
@@ -17,8 +17,16 @@ export default function IssuesPage() {
   // Resolved issues are hidden by default so the list shows what still needs work.
   const [view, setView] = useState('active');
   const [search, setSearch] = useState('');
+  const searchRef = useRef(null);
   const shown = filterIssues(issues, { view, search });
   const filtering = view !== 'all' || search.trim();
+
+  // Clear only the text. The Active / Resolved / All filter stays as it is.
+  // A real button, so Enter and Space activate it the same way a click does.
+  const clearSearch = () => {
+    setSearch('');
+    searchRef.current?.focus();
+  };
 
   const emptyText = () => {
     if (!issues.length) return 'No issues yet. Start the first one.';
@@ -42,14 +50,22 @@ export default function IssuesPage() {
         {issues.length > 0 && (
           <div className="list-tools" role="search">
             <label className="sr-only" htmlFor="issue-search">Search issues</label>
-            <input
-              id="issue-search"
-              type="search"
-              className="field"
-              placeholder="Search issues"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <div className={`search-wrap${search ? ' has-clear' : ''}`}>
+              <input
+                id="issue-search"
+                ref={searchRef}
+                type="search"
+                className="field"
+                placeholder="Search issues"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              {search && (
+                <button type="button" className="search-clear" aria-label="Clear search" onClick={clearSearch}>
+                  ×
+                </button>
+              )}
+            </div>
             <Segmented label="Show" name="issue-view" options={ISSUE_VIEWS} value={view} onChange={setView} />
             <p className="muted-sm" aria-live="polite">
               {filtering ? `Showing ${shown.length} of ${issues.length}` : `${issues.length} ${issues.length === 1 ? 'issue' : 'issues'}`}

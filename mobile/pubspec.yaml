@@ -1,0 +1,19 @@
+name: many_hands_mobile
+description: A mobile client for the Many Hands volunteer community.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cloud_firestore: ^7.2.0
+  firebase_ai: ^5.2.0
+  firebase_auth: ^7.1.0
+  firebase_core: ^5.2.0
+  speech_to_text: ^7.3.0
+
+flutter:
+  uses-material-design: true
